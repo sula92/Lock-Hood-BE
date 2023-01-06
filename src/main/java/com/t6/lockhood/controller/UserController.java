@@ -102,8 +102,8 @@ public class UserController {
         return userRepository.save(user);
     }
 
-    @PutMapping("/users")
-    public User editUser(@RequestBody @Valid User user){
+    @PutMapping("/users/{id}")
+    public User editUser(@PathVariable int id, @RequestBody @Valid User user){
         return userRepository.save(user);
     }
 

@@ -2,10 +2,7 @@ package com.t6.lockhood.model;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -17,7 +14,9 @@ import javax.persistence.ManyToOne;
 public class Inventory {
 
     @Id
-    String rowMaterialId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    int stockId;
+    int rowMaterialId;
     String name;
     int avilableQuantity;
     int unitValue;
