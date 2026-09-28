@@ -2,7 +2,7 @@ package com.t6.lockhood.model;
 
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @AllArgsConstructor

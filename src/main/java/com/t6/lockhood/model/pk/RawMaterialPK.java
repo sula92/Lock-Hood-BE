@@ -3,7 +3,7 @@ package com.t6.lockhood.model.pk;
 import com.t6.lockhood.model.SuperEntity;
 import lombok.*;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
 
 @Getter
 @Setter

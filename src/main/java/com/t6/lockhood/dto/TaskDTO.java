@@ -4,7 +4,7 @@ import com.t6.lockhood.model.Employee;
 import com.t6.lockhood.model.enums.Priority;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Date;
 
 @Getter

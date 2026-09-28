@@ -4,7 +4,7 @@ import com.t6.lockhood.model.enums.CivilStatus;
 import com.t6.lockhood.model.enums.EmployeeType;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.sql.Date;
 
 
@@ -18,7 +18,8 @@ import java.sql.Date;
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernate_sequence")
+    @SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence", allocationSize = 1)
     int id;
     String name;
     String address;
