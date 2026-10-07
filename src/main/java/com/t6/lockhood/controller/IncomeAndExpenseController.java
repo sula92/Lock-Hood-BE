@@ -9,12 +9,16 @@ import com.t6.lockhood.model.Expense;
 import com.t6.lockhood.repository.ExpenseRepository;
 import com.t6.lockhood.repository.IncomeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -161,18 +165,35 @@ public class IncomeAndExpenseController {
         }
 
         @GetMapping("/income&expense")
-        public TotIncomeAndExpensesDTO getTotIncome(){
-                long totIncome=incomeRepository.getTotIncome();
-                long totOtherExp=expenseRepository.getTotOtherExpenses();
+        public TotIncomeAndExpensesDTO getTotIncome(
+                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to){
+
+                LocalDate start = from != null ? from : LocalDate.now().withDayOfMonth(1);
+                LocalDate end = to != null ? to : start.plusMonths(1).withDayOfMonth(1).minusDays(1);
+                if (end.isBefore(start)) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "'to' must not be before 'from'");
+                }
+
+                Date fromDate = Date.valueOf(start);
+                Date toExclusive = Date.valueOf(end.plusDays(1));
+
+                long totIncome = valueOrZero(incomeRepository.getTotIncome(fromDate, toExclusive));
+                long totSalaries = valueOrZero(expenseRepository.getTotSalaries(fromDate, toExclusive));
+                long totOtherExp = valueOrZero(expenseRepository.getTotOtherExpenses(fromDate, toExclusive));
+                long netIncome = totIncome - totSalaries - totOtherExp;
 
                 TotIncomeAndExpensesDTO totIncomeAndExpensesDTO =new TotIncomeAndExpensesDTO();
                 totIncomeAndExpensesDTO.setGrossIncome(String.valueOf(totIncome));
-                totIncomeAndExpensesDTO.setNetIncome(String.valueOf(totIncome));
-                totIncomeAndExpensesDTO.setSalariesPaid(String.valueOf(totOtherExp));
+                totIncomeAndExpensesDTO.setNetIncome(String.valueOf(netIncome));
+                totIncomeAndExpensesDTO.setSalariesPaid(String.valueOf(totSalaries));
                 totIncomeAndExpensesDTO.setTotalOtherExpenses(String.valueOf(totOtherExp));
 
                 return totIncomeAndExpensesDTO;
         }
 
-      
+        private static long valueOrZero(Long value) {
+                return value == null ? 0L : value;
+        }
+
 }
