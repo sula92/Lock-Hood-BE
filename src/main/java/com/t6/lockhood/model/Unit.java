@@ -15,7 +15,7 @@ public class Unit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    String id;
+    int id;
     String name;
     @ManyToOne
     @JoinColumn(name = "department_id", referencedColumnName = "id")
